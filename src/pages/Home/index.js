@@ -43,7 +43,7 @@ function Home() {
                         return (
                             <article key={item.id}>
                                 <strong>{item.title}</strong>
-                                <img src={`https://image.tmdb.org/t/p/original/${item.poster_path}`} alt={item.title} />
+                                <img src={`https://image.tmdb.org/t/p/original/${item.backdrop_path}`} alt={item.title} />
                                 <Link to={`/filme/${item.id}`}>Acessar</Link>
                             </article>
                         )
