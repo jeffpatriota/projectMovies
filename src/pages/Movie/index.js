@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import './style.css';
 
 import api from "../../services/api";
@@ -7,7 +7,9 @@ import api from "../../services/api";
 function Movie() {
     const { id } = useParams();
     const [movie, setMovie] = useState({});
+
     const [loading, setLoading] = useState(true);
+    const navigation = useNavigate();
 
     useEffect(() => {
         async function loadFilmes() {
@@ -22,7 +24,9 @@ function Movie() {
                     setLoading(false);
                 })
                 .catch(() => {
-                    console.log('Filme não encontrado')
+                    console.log('Filme não encontrado');
+                    navigation("/", { replace: true});
+                    return;
                 })
         }
 
@@ -33,7 +37,25 @@ function Movie() {
         return () => {
             console.log("COMPONENTE FOI DESMONTADO")
         }
-    }, [])
+    }, [navigation, id])
+
+
+    function saveMovie(){
+        const myList = localStorage.getItem("@moviesTips");
+
+        let moviesSave = JSON.parse(myList) || [];
+
+        const hasFilmes = moviesSave.some((moviesSave)=> moviesSave.id === movie.id)
+
+        if(hasFilmes){
+            alert("ESSE FILME JÁ ESTA NA LISTA")
+        return;
+        }
+
+        moviesSave.push(movie);
+        localStorage.setItem("@moviesTips", JSON.stringify(moviesSave));
+        alert("FILME SALVO COM SUCESSO")
+    }
 
     if (loading) {
         return (
@@ -54,10 +76,10 @@ function Movie() {
             <strong>Avaliação: {movie.vote_average} /10 </strong>
 
             <div className="Area-Buttons">
-            <button>Salvar</button>
-            <button>
-                <a href="#">Trailer</a>
-            </button>
+                <button onClick={saveMovie}>Salvar</button>
+                <button>
+                    <a target="blank" rel="external noreferrer" href={`https://youtube.com/results?search_query=${movie.title} Trailer`}>Trailer</a>
+                </button>
             </div>
         </div>
     )
